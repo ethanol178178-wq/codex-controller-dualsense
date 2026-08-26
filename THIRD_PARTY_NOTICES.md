@@ -1,9 +1,38 @@
 # Third-Party Notices
 
-The optional virtual Precision Touchpad driver under `driver/ds5ptp` contains
-or adapts code and protocol data from the following projects under their
-respective licenses. No third-party runtime Python or JavaScript packages are
-bundled.
+Release packages include the CPython runtime and a PyInstaller bootloader. The
+Windows installer is produced with Inno Setup. The optional virtual Precision
+Touchpad driver under `driver/ds5ptp` contains or adapts code and protocol data
+from the projects listed below. Each component remains under its respective
+license.
+
+## CPython 3.12
+
+Source: <https://github.com/python/cpython/tree/3.12>
+
+The portable application includes the CPython 3.12 runtime and standard
+library. The complete Python Software Foundation License and incorporated
+notices are retained in [`licenses/CPYTHON-3.12.txt`](licenses/CPYTHON-3.12.txt)
+and included in release packages.
+
+## PyInstaller 6.15
+
+Source: <https://github.com/pyinstaller/pyinstaller/tree/v6.15.0>
+
+The application executable uses the PyInstaller bootloader. PyInstaller is
+licensed under GPL-2.0-or-later with a special exception permitting distribution
+of bundled applications. The complete terms and bootloader exception are
+retained in [`licenses/PYINSTALLER-6.15.txt`](licenses/PYINSTALLER-6.15.txt) and
+included in release packages.
+
+## Inno Setup 6
+
+Source: <https://github.com/jrsoftware/issrc>
+
+The Windows setup executable is produced with Inno Setup. Its license and
+copyright notice are retained in [`licenses/INNO-SETUP-6.txt`](licenses/INNO-SETUP-6.txt)
+and included in the installed application files. The project does not claim
+authorship of Inno Setup.
 
 ## Microsoft Windows Driver Samples: vhidmini2
 

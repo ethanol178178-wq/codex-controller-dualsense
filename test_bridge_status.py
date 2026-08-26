@@ -120,11 +120,55 @@ class ReleaseMetadataTests(unittest.TestCase):
 
     def test_required_open_source_documents_exist(self) -> None:
         root = Path(bridge.__file__).parent
-        for name in ("README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"):
+        for name in (
+            "README.md",
+            "LICENSE",
+            "THIRD_PARTY_NOTICES.md",
+            "PRIVACY.md",
+            "CODE_SIGNING_POLICY.md",
+            "SIGNING.md",
+        ):
             self.assertTrue((root / name).is_file(), name)
         driver_root = root / "driver" / "ds5ptp"
         self.assertTrue((driver_root / "README.md").is_file())
         self.assertTrue((driver_root / "uninstall-driver.ps1").is_file())
+        license_root = root / "licenses"
+        for name in (
+            "CPYTHON-3.12.txt",
+            "PYINSTALLER-6.15.txt",
+            "INNO-SETUP-6.txt",
+        ):
+            self.assertTrue((license_root / name).is_file(), name)
+
+    def test_code_signing_policy_is_linked_from_home_page(self) -> None:
+        root = Path(bridge.__file__).parent
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## Code signing policy", readme)
+        self.assertIn("Free code signing provided by [SignPath.io]", readme)
+        self.assertIn("[SignPath Foundation]", readme)
+        self.assertIn("PRIVACY.md", readme)
+        release_notes = (root / "RELEASE_NOTES.md").read_text(encoding="utf-8")
+        self.assertIn("## Code signing policy", release_notes)
+        self.assertIn("Version 0.2.4 is unsigned", release_notes)
+
+    def test_release_workflow_refuses_unsigned_publication(self) -> None:
+        root = Path(bridge.__file__).parent
+        workflow = (root / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
+        self.assertIn("signpath/github-action-submit-signing-request@v2", workflow)
+        self.assertEqual(workflow.count("signpath/github-action-submit-signing-request@v2"), 2)
+        self.assertIn("verify-signatures.ps1", workflow)
+        self.assertIn("Signed release is not configured", workflow)
+        self.assertLess(workflow.index("Verify signed release files"), workflow.index("Publish GitHub Release"))
+
+    def test_signed_files_have_release_metadata_configuration(self) -> None:
+        root = Path(bridge.__file__).parent
+        spec = (root / "packaging" / "DualSenseCodex.spec").read_text(encoding="utf-8")
+        installer = (root / "packaging" / "DualSenseCodex.iss").read_text(encoding="utf-8")
+        self.assertIn("DUALSENSE_CODEX_VERSION_FILE", spec)
+        build_script = (root / "packaging" / "build.ps1").read_text(encoding="utf-8")
+        self.assertIn("StringStruct('ProductName', 'Codex Controller for DualSense')", build_script)
+        self.assertIn("VersionInfoProductName={#MyAppName}", installer)
+        self.assertIn("VersionInfoProductVersion={#MyAppVersion}", installer)
 
 
 class CodexStatusLightEngineTests(unittest.TestCase):

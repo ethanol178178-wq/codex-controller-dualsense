@@ -1,0 +1,7 @@
+# Release and signing controls require explicit maintainer review.
+/.github/workflows/release.yml @Jhen-da
+/.github/CODEOWNERS @Jhen-da
+/packaging/ @Jhen-da
+/CODE_SIGNING_POLICY.md @Jhen-da
+/PRIVACY.md @Jhen-da
+/SIGNING.md @Jhen-da

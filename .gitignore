@@ -27,6 +27,8 @@ release/
 packaging/.build/
 packaging/dist/
 packaging/output/
+packaging/signing-input/
+packaging/signing-output/
 packaging/*.zip
 packaging/*.exe
 packaging/SHA256SUMS-*.txt

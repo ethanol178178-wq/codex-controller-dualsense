@@ -30,3 +30,7 @@ disclosure.
 Mapping a controller button to a global keyboard shortcut grants that physical
 button the same effect as pressing the shortcut on the keyboard. Review custom
 mappings before enabling them.
+
+Release authenticity and signing incidents are handled according to the
+[code signing policy](CODE_SIGNING_POLICY.md). Data handling and local storage
+are documented in the [privacy policy](PRIVACY.md).

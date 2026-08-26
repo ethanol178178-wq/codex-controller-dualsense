@@ -13,7 +13,7 @@
 - `DualSense-Codex-Setup-<版本>.exe`：推薦給一般使用者。完成安裝後會在登入 Windows 時背景啟動。
 - `DualSense-Codex-Portable-<版本>.zip`：免安裝版本。解壓縮後執行 `DualSenseCodex.exe`。
 
-目前安裝程式尚未簽章，Windows SmartScreen 可能顯示「Windows 已保護您的電腦」。請先核對 Release 頁面的 SHA-256，再選擇「其他資訊」與「仍要執行」。如果不信任下載來源，請勿執行。
+0.2.4 與更早版本尚未簽章，Windows SmartScreen 可能顯示「Windows 已保護您的電腦」。請先核對 Release 頁面的 SHA-256，再選擇「其他資訊」與「仍要執行」。如果不信任下載來源，請勿執行。後續版本只有在簽章與時間戳都驗證成功後才會由自動流程發布。
 
 ## 開箱即用配置
 
@@ -52,7 +52,7 @@ Codex 狀態燈預設為白色待命、藍色工作、綠色完成、黃色待�
 - Codex Desktop。
 - 目前只支援 USB，不支援藍牙。
 - 程式必須在背景執行，按鍵映射才能作用。
-- 安裝版與可攜版均尚未進行程式碼簽章。
+- 0.2.4 與更早版本未簽章；請在 Release 頁面確認下載版本與簽章狀態。
 - 虛擬 Precision Touchpad 驅動屬於實驗性進階功能，並非主要控制流程所必需。
 
 虛擬觸控板驅動需要 Visual Studio 2022 Build Tools、Windows 11 WDK 與 Windows 測試簽章模式。建置及安裝方式請參閱 [`driver/ds5ptp/README.md`](driver/ds5ptp/README.md)。
@@ -97,7 +97,13 @@ node --check app.js
 - Codex 狀態事件會匿名化工作階段識別，不傳送提示詞、回覆內容或檔案路徑。
 - 專案不包含 API Key、個人錄音或本機映射檔。
 
-安全問題請依照 [`SECURITY.md`](SECURITY.md) 回報。
+完整資料處理方式請參閱 [`PRIVACY.md`](PRIVACY.md)，安全問題請依照 [`SECURITY.md`](SECURITY.md) 回報。
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+
+簽章適用範圍、團隊角色、人工核准、建置來源驗證與事件處理方式，請參閱 [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md)。目前的簽章申請與設定進度則記錄在 [`SIGNING.md`](SIGNING.md)。在 SignPath 正式核准並完成設定前，本專案不會把未簽名檔案標示成已簽名版本。
 
 ## 來源與授權
 

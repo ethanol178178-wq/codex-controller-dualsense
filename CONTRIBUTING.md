@@ -41,6 +41,13 @@ DualSense connected over USB.
 - Do not commit build outputs, local logs, tokens, mappings, or machine-specific
   Codex configuration.
 - Update `CHANGELOG.md` when the change should appear in release notes.
+- Treat changes to the release workflow, packaging scripts, privacy policy, and
+  code signing policy as security-sensitive changes requiring explicit
+  maintainer review.
+
+Signed releases are built only by the tagged GitHub Actions workflow described
+in [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md). Do not publish or label a
+local build as an official signed release.
 
 The optional virtual touchpad driver contains separately licensed code. Keep
 its source notices intact when editing or redistributing that directory.

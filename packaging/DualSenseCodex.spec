@@ -1,5 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
 from pathlib import Path
 
 
@@ -19,7 +20,11 @@ a = Analysis(
         (str(project_dir / "README.md"), "."),
         (str(project_dir / "CHANGELOG.md"), "."),
         (str(project_dir / "SECURITY.md"), "."),
+        (str(project_dir / "PRIVACY.md"), "."),
+        (str(project_dir / "CODE_SIGNING_POLICY.md"), "."),
+        (str(project_dir / "SIGNING.md"), "."),
         (str(project_dir / "THIRD_PARTY_NOTICES.md"), "."),
+        (str(project_dir / "licenses"), "licenses"),
         (str(project_dir / "assets" / "dualsense-wireframe.png"), "assets"),
     ],
     hiddenimports=[],
@@ -46,6 +51,7 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
+    version=os.environ.get("DUALSENSE_CODEX_VERSION_FILE") or None,
     codesign_identity=None,
     entitlements_file=None,
 )

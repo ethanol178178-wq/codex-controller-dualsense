@@ -2,15 +2,15 @@
   #define MyAppVersion "0.2.4"
 #endif
 
-#define MyAppName "DualSense Codex"
+#define MyAppName "Codex Controller for DualSense"
 #define MyAppExeName "DualSenseCodex.exe"
 
 [Setup]
 AppId={{A1498B5D-2AA2-4E64-BD79-7D03BCDAE409}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-AppPublisher=DualSense Codex Project
-DefaultDirName={autopf}\DualSense Codex
+AppPublisher=Codex Controller for DualSense contributors
+DefaultDirName={autopf}\Codex Controller for DualSense
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 ArchitecturesAllowed=x64compatible
@@ -23,8 +23,11 @@ SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
 VersionInfoVersion={#MyAppVersion}
+VersionInfoCompany=Codex Controller for DualSense contributors
 VersionInfoDescription=DualSense controller integration for Codex Desktop
 VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoCopyright=Copyright (c) Codex Controller for DualSense contributors
 
 [Languages]
 Name: "chinesetraditional"; MessagesFile: "ChineseTraditional.isl"

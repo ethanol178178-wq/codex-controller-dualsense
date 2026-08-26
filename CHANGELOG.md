@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Added
+
+- Privacy and code signing policies for the public open-source release.
+- A two-stage SignPath workflow that signs and verifies the portable executable
+  before building and signing the installer.
+- Windows product and version metadata for release executables.
+
+### Changed
+
+- Release publication now stops when signing configuration, a valid
+  Authenticode signature, or a trusted timestamp is missing.
+
 ## [0.2.4] - 2026-08-27
 
 ### Added

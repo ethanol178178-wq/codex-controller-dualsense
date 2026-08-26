@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d1113" />
+    <title>Codex Controller</title>
+    <link rel="stylesheet" href="./styles.css?v=12" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <p class="eyebrow">DUALSENSE FOR CODEX</p>
+            <h1>CODEX CONTROLLER</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="health-pills" aria-label="連線狀態">
+            <div id="serviceHealth" class="health-pill">
+              <span class="status-dot"></span><span>服務</span
+              ><strong id="serviceHealthLabel">連線中</strong>
+            </div>
+            <div id="controllerHealth" class="health-pill">
+              <span id="connectionDot" class="status-dot"></span
+              ><span>手把</span><strong id="connectionLabel">偵測中</strong>
+            </div>
+            <div id="codexHealth" class="health-pill">
+              <span class="status-dot"></span><span>Codex</span
+              ><strong id="codexHealthLabel">等待狀態</strong>
+            </div>
+          </div>
+          <label class="master-switch">
+            <span>映射</span>
+            <input id="mappingToggle" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"><i></i></span>
+            <strong id="mappingToggleLabel">已停用</strong>
+          </label>
+        </div>
+      </header>
+
+      <div class="hub-layout">
+        <aside class="sidebar">
+          <div class="device-intro">
+            <span class="device-intro-kicker">YOUR DEVICE</span>
+            <img
+              src="./assets/dualsense-wireframe.png"
+              alt="DualSense 控制器"
+            />
+            <strong>DualSense</strong>
+            <small>已為 Codex 準備完成</small>
+          </div>
+
+          <nav class="hub-nav" aria-label="功能導覽">
+            <button
+              class="nav-item is-active"
+              type="button"
+              data-view="mapping"
+            >
+              <span class="nav-icon">⌘</span
+              ><span><b>手把</b><small>按鍵與語音</small></span>
+            </button>
+            <button class="nav-item" type="button" data-view="lighting">
+              <span class="nav-icon">◉</span
+              ><span><b>體驗</b><small>燈光、扳機、觸控板</small></span>
+            </button>
+            <button class="nav-item" type="button" data-view="micro">
+              <span class="nav-icon">◇</span
+              ><span><b>裝置</b><small>連線與診斷</small></span>
+            </button>
+          </nav>
+
+          <section class="device-card" aria-label="設備狀態">
+            <div class="device-card-head">
+              <span class="mini-controller">DS</span>
+              <div>
+                <strong id="deviceName">DualSense</strong
+                ><small id="deviceId">054C / ----</small>
+              </div>
+            </div>
+            <dl class="device-stats">
+              <div>
+                <dt>連接</dt>
+                <dd id="transportValue">USB / 等待</dd>
+              </div>
+              <div>
+                <dt>輸入報告</dt>
+                <dd id="reportCount">0</dd>
+              </div>
+              <div>
+                <dt>快捷鍵派發</dt>
+                <dd id="dispatchCount">0</dd>
+              </div>
+              <div>
+                <dt>延遲</dt>
+                <dd id="reportAge">-- ms</dd>
+              </div>
+            </dl>
+            <button
+              id="reconnectButton"
+              class="button button-quiet"
+              type="button"
+            >
+              重新偵測
+            </button>
+            <button
+              id="sidebarFocusCodexButton"
+              class="button button-primary"
+              type="button"
+            >
+              切回 Codex
+            </button>
+          </section>
+
+          <div class="sidebar-footer">
+            <span class="service-dot" id="serviceDot"></span
+            ><span id="serviceState">本機服務離線</span
+            ><small>127.0.0.1:37845</small>
+          </div>
+        </aside>
+
+        <main class="main-stage">
+          <section id="microView" class="view device-view">
+            <div class="view-header micro-view-header">
+              <div>
+                <p class="eyebrow">DEVICE &amp; DIAGNOSTICS</p>
+                <h2>裝置</h2>
+              </div>
+              <span id="microModeBadge" class="badge micro-mode-badge"
+                >背景服務與即時狀態</span
+              >
+            </div>
+
+            <div class="micro-overview">
+              <section
+                id="microHero"
+                class="micro-hero"
+                data-state="offline"
+                aria-live="polite"
+              >
+                <div class="micro-hero-copy">
+                  <span class="section-kicker">LIVE CODEX STATE</span>
+                  <h3 id="microStateLabel">正在連接控制中心</h3>
+                  <p id="microStateMeta">
+                    確認本機服務、DualSense 與 Codex 狀態通道。
+                  </p>
+                </div>
+                <div class="micro-state-orb" aria-hidden="true">
+                  <i></i><span></span>
+                </div>
+                <div class="micro-vitals" aria-label="系統狀態">
+                  <div id="microServiceVital">
+                    <span class="vital-dot"></span><small>本機服務</small
+                    ><strong>連線中</strong>
+                  </div>
+                  <div id="microControllerVital">
+                    <span class="vital-dot"></span><small>DualSense</small
+                    ><strong>偵測中</strong>
+                  </div>
+                  <div id="microCodexVital">
+                    <span class="vital-dot"></span><small>Codex 狀態</small
+                    ><strong>等待中</strong>
+                  </div>
+                </div>
+              </section>
+
+              <section class="micro-now-panel">
+                <div class="section-heading">
+                  <div>
+                    <span class="section-kicker">CORE LOOP</span>
+                    <h3>對話、聽寫、確認、送出</h3>
+                  </div>
+                  <span id="microInputBadge" class="badge">等待輸入</span>
+                </div>
+                <div
+                  id="microCoreActions"
+                  class="micro-core-actions"
+                  aria-label="核心按鍵"
+                ></div>
+                <div class="micro-last-action">
+                  <span id="microLastActionIcon">—</span>
+                  <div>
+                    <small>最近動作</small
+                    ><strong id="microLastAction">尚未收到手把輸入</strong>
+                    <p id="microLastActionMeta">
+                      按下按鍵後會立即顯示實際派發結果。
+                    </p>
+                  </div>
+                </div>
+                <div class="micro-now-actions">
+                  <button
+                    id="focusCodexButton"
+                    class="button button-primary"
+                    type="button"
+                  >
+                    切回 Codex
+                  </button>
+                  <button
+                    id="testFeedbackButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    測試狀態震動
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <section class="device-diagnostics-panel">
+              <div class="section-heading">
+                <div>
+                  <span class="section-kicker">DEVICE CARE</span>
+                  <h3>連線與診斷</h3>
+                </div>
+                <p>日常使用不需要調整這裡；遇到連線問題時再回來。</p>
+              </div>
+              <div class="device-action-grid">
+                <article>
+                  <span>01</span>
+                  <div>
+                    <strong>重新偵測手把</strong>
+                    <p>重新連接背景服務與 DualSense。</p>
+                  </div>
+                  <button
+                    id="deviceReconnectButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    重新偵測
+                  </button>
+                </article>
+                <article>
+                  <span>02</span>
+                  <div>
+                    <strong>測試觸覺回饋</strong>
+                    <p>用短震動確認輸出通道正常。</p>
+                  </div>
+                  <button
+                    id="deviceTestFeedbackButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    開始測試
+                  </button>
+                </article>
+                <article>
+                  <span>03</span>
+                  <div>
+                    <strong>恢復 Codex 配置</strong>
+                    <p>還原成開箱即可使用的推薦按鍵。</p>
+                  </div>
+                  <button
+                    id="deviceResetProfileButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    恢復推薦
+                  </button>
+                </article>
+              </div>
+            </section>
+
+            <section class="micro-modes-panel">
+              <div class="section-heading">
+                <div>
+                  <span class="section-kicker">EXPERIENCE PRESETS</span>
+                  <h3>Codex Micro 模式</h3>
+                </div>
+                <p>
+                  每個模式只使用可驗證的 Codex 快捷鍵；套用後會保存到本機服務。
+                </p>
+              </div>
+              <div class="micro-mode-grid">
+                <article
+                  class="micro-mode-card"
+                  data-micro-profile="micro_focus"
+                >
+                  <span class="mode-number">01</span>
+                  <div>
+                    <h3>專注模式</h3>
+                    <p>語音、送出、確認與取消。適合日常和 Codex 對話。</p>
+                  </div>
+                  <ul>
+                    <li>MIC 即時語音</li>
+                    <li>L2 按住聽寫</li>
+                    <li>觸控板尋找</li>
+                    <li>□ 刪字／長按清空</li>
+                    <li>R2 送出</li>
+                    <li>○ 取消</li>
+                  </ul>
+                  <button
+                    class="button button-secondary"
+                    type="button"
+                    data-apply-profile="micro_focus"
+                  >
+                    使用此模式
+                  </button>
+                </article>
+                <article
+                  class="micro-mode-card"
+                  data-micro-profile="micro_tasks"
+                >
+                  <span class="mode-number">02</span>
+                  <div>
+                    <h3>任務模式</h3>
+                    <p>快速巡覽最近任務與待處理項目，不離開目前工作流。</p>
+                  </div>
+                  <ul>
+                    <li>十字鍵切任務</li>
+                    <li>L1 / R1 往返</li>
+                    <li>PS 立即聚焦</li>
+                    <li>L2 按住聽寫</li>
+                  </ul>
+                  <button
+                    class="button button-secondary"
+                    type="button"
+                    data-apply-profile="micro_tasks"
+                  >
+                    使用此模式
+                  </button>
+                </article>
+                <article
+                  class="micro-mode-card"
+                  data-micro-profile="micro_review"
+                >
+                  <span class="mode-number">03</span>
+                  <div>
+                    <h3>審閱模式</h3>
+                    <p>開啟審閱、處理選項並跳到需要回應的任務。</p>
+                  </div>
+                  <ul>
+                    <li>R1 審閱面板</li>
+                    <li>□ 刪字／長按清空</li>
+                    <li>× 接受選項</li>
+                    <li>○ 拒絕 / 關閉</li>
+                  </ul>
+                  <button
+                    class="button button-secondary"
+                    type="button"
+                    data-apply-profile="micro_review"
+                  >
+                    使用此模式
+                  </button>
+                </article>
+                <article
+                  class="micro-mode-card micro-mode-custom"
+                  data-micro-profile="vibe"
+                >
+                  <span class="mode-number">04</span>
+                  <div>
+                    <h3>我的設定</h3>
+                    <p>保留你目前熟悉的配置；可到「按鍵映射」逐鍵修改。</p>
+                  </div>
+                  <ul>
+                    <li>完整自訂</li>
+                    <li>自動保存</li>
+                    <li>重新啟動後恢復</li>
+                    <li>顯示穩定性</li>
+                  </ul>
+                  <button
+                    class="button button-secondary"
+                    type="button"
+                    data-apply-profile="vibe"
+                  >
+                    使用我的設定
+                  </button>
+                </article>
+              </div>
+            </section>
+
+            <section class="micro-reliability-panel">
+              <div>
+                <span class="section-kicker">RELIABILITY FIRST</span>
+                <h3>只讓可靠功能進入主要操作</h3>
+                <p>
+                  原生快捷鍵直接由 Codex 支援；系統動作由 Windows
+                  執行；會操作選單的功能則隔離為實驗性。
+                </p>
+              </div>
+              <div class="reliability-legend">
+                <span class="reliability-chip is-native"
+                  ><i></i>Codex 原生</span
+                >
+                <span class="reliability-chip is-system"><i></i>系統穩定</span>
+                <span class="reliability-chip is-experimental"
+                  ><i></i>實驗性</span
+                >
+              </div>
+              <button
+                id="openMappingButton"
+                class="button button-secondary"
+                type="button"
+              >
+                檢視完整映射
+              </button>
+            </section>
+          </section>
+
+          <section id="mappingView" class="view is-active">
+            <div class="view-header">
+              <div>
+                <p class="eyebrow">YOUR DUALSENSE</p>
+                <h2>手把</h2>
+              </div>
+              <div class="profile-controls">
+                <label for="profileSelect">設定</label>
+                <select id="profileSelect">
+                  <option value="vibe">Codex（推薦）</option>
+                  <option value="navigation">桌面導覽</option>
+                  <option value="blank">空白設定</option>
+                </select>
+                <button
+                  id="resetProfileButton"
+                  class="icon-button"
+                  type="button"
+                  title="還原目前預設"
+                  aria-label="還原目前預設"
+                >
+                  ↺
+                </button>
+              </div>
+            </div>
+
+            <div class="mapping-workspace">
+              <section class="controller-monitor" aria-label="控制器即時輸入">
+                <div class="section-heading">
+                  <div>
+                    <span class="section-kicker">CLICK TO CUSTOMIZE</span>
+                    <h3>直接點按鍵設定</h3>
+                  </div>
+                  <span id="inputBadge" class="badge">等待輸入</span>
+                </div>
+                <div class="controller-visual" id="controllerVisual">
+                  <img
+                    class="controller-wireframe"
+                    src="./assets/dualsense-wireframe.png"
+                    alt="DualSense 正面線框圖"
+                  />
+                  <button
+                    class="twin-node twin-shoulder"
+                    type="button"
+                    data-button="l2"
+                    style="--x: 31%; --y: 9%"
+                  >
+                    <span>L2</span><kbd data-map-for="l2"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-shoulder"
+                    type="button"
+                    data-button="r2"
+                    style="--x: 69%; --y: 9%"
+                  >
+                    <span>R2</span><kbd data-map-for="r2"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-shoulder"
+                    type="button"
+                    data-button="l1"
+                    style="--x: 38%; --y: 12%"
+                  >
+                    <span>L1</span><kbd data-map-for="l1"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-shoulder"
+                    type="button"
+                    data-button="r1"
+                    style="--x: 62%; --y: 12%"
+                  >
+                    <span>R1</span><kbd data-map-for="r1"></kbd>
+                  </button>
+
+                  <button
+                    class="twin-node twin-system callout-left"
+                    type="button"
+                    data-button="create"
+                    style="--x: 31.5%; --y: 17%"
+                  >
+                    <span>CR</span><kbd data-map-for="create"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-touchpad"
+                    type="button"
+                    data-button="touchpad"
+                    style="--x: 50%; --y: 24%"
+                  >
+                    <span>觸控板</span><kbd data-map-for="touchpad"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-system callout-left"
+                    type="button"
+                    data-button="options"
+                    style="--x: 71.5%; --y: 17%"
+                  >
+                    <span>OP</span><kbd data-map-for="options"></kbd>
+                  </button>
+
+                  <button
+                    class="twin-node twin-dpad callout-top"
+                    type="button"
+                    data-button="dpad_up"
+                    style="--x: 24.7%; --y: 24.6%"
+                  >
+                    <span>▲</span><kbd data-map-for="dpad_up"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-dpad callout-right"
+                    type="button"
+                    data-button="dpad_right"
+                    style="--x: 30.6%; --y: 31%"
+                  >
+                    <span>▶</span><kbd data-map-for="dpad_right"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-dpad callout-bottom"
+                    type="button"
+                    data-button="dpad_down"
+                    style="--x: 24.7%; --y: 38.8%"
+                  >
+                    <span>▼</span><kbd data-map-for="dpad_down"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-dpad callout-left"
+                    type="button"
+                    data-button="dpad_left"
+                    style="--x: 18.6%; --y: 31%"
+                  >
+                    <span>◀</span><kbd data-map-for="dpad_left"></kbd>
+                  </button>
+
+                  <button
+                    class="twin-node twin-face callout-right"
+                    type="button"
+                    data-button="triangle"
+                    style="--x: 79.4%; --y: 21.2%"
+                  >
+                    <span>△</span><kbd data-map-for="triangle"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-face callout-right"
+                    type="button"
+                    data-button="circle"
+                    style="--x: 85.2%; --y: 30.2%"
+                  >
+                    <span>○</span><kbd data-map-for="circle"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-face callout-bottom"
+                    type="button"
+                    data-button="cross"
+                    style="--x: 79.4%; --y: 40.2%"
+                  >
+                    <span>×</span><kbd data-map-for="cross"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-face callout-left"
+                    type="button"
+                    data-button="square"
+                    style="--x: 73.5%; --y: 30.2%"
+                  >
+                    <span>□</span><kbd data-map-for="square"></kbd>
+                  </button>
+
+                  <button
+                    class="twin-node twin-stick"
+                    type="button"
+                    data-button="l3"
+                    style="--x: 37.7%; --y: 49%"
+                  >
+                    <span><i id="leftStick"></i></span
+                    ><kbd data-map-for="l3"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick"
+                    type="button"
+                    data-button="r3"
+                    style="--x: 66.1%; --y: 49%"
+                  >
+                    <span><i id="rightStick"></i></span
+                    ><kbd data-map-for="r3"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-top"
+                    type="button"
+                    data-button="left_stick_up"
+                    style="--x: 37.7%; --y: 42.5%"
+                  >
+                    <span>↑</span><kbd data-map-for="left_stick_up"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-right"
+                    type="button"
+                    data-button="left_stick_right"
+                    style="--x: 42.8%; --y: 49%"
+                  >
+                    <span>→</span><kbd data-map-for="left_stick_right"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-bottom"
+                    type="button"
+                    data-button="left_stick_down"
+                    style="--x: 37.7%; --y: 55.5%"
+                  >
+                    <span>↓</span><kbd data-map-for="left_stick_down"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-left"
+                    type="button"
+                    data-button="left_stick_left"
+                    style="--x: 32.6%; --y: 49%"
+                  >
+                    <span>←</span><kbd data-map-for="left_stick_left"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-top"
+                    type="button"
+                    data-button="right_stick_up"
+                    style="--x: 66.1%; --y: 42.5%"
+                  >
+                    <span>↑</span><kbd data-map-for="right_stick_up"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-right"
+                    type="button"
+                    data-button="right_stick_right"
+                    style="--x: 71.2%; --y: 49%"
+                  >
+                    <span>→</span><kbd data-map-for="right_stick_right"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-bottom"
+                    type="button"
+                    data-button="right_stick_down"
+                    style="--x: 66.1%; --y: 55.5%"
+                  >
+                    <span>↓</span><kbd data-map-for="right_stick_down"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-stick-direction callout-left"
+                    type="button"
+                    data-button="right_stick_left"
+                    style="--x: 61%; --y: 49%"
+                  >
+                    <span>←</span><kbd data-map-for="right_stick_left"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-center"
+                    type="button"
+                    data-button="ps"
+                    style="--x: 52%; --y: 49%"
+                  >
+                    <span>PS</span><kbd data-map-for="ps"></kbd>
+                  </button>
+                  <button
+                    class="twin-node twin-center twin-mute"
+                    type="button"
+                    data-button="mute"
+                    style="--x: 52%; --y: 57%"
+                  >
+                    <span>MIC</span><kbd data-map-for="mute"></kbd>
+                  </button>
+                </div>
+                <div id="twinReadout" class="twin-readout">
+                  <span>DIGITAL TWIN</span
+                  ><strong id="twinButtonName">等待輸入</strong
+                  ><kbd id="twinMappingValue">—</kbd>
+                </div>
+                <div class="axis-monitor">
+                  <div>
+                    <span>L 搖桿</span
+                    ><strong id="leftAxisValue">0.00 / 0.00</strong>
+                  </div>
+                  <div>
+                    <span>R 搖桿</span
+                    ><strong id="rightAxisValue">0.00 / 0.00</strong>
+                  </div>
+                  <div>
+                    <span>L2 / R2</span
+                    ><strong id="triggerValue">0% / 0%</strong>
+                  </div>
+                  <div>
+                    <span>觸控板</span><strong id="touchpadPosition">—</strong>
+                  </div>
+                </div>
+                <div class="pressed-strip">
+                  <span>目前按鍵</span><strong id="pressedButtons">—</strong>
+                </div>
+              </section>
+
+              <section class="mapping-panel" aria-label="映射設定">
+                <div class="selected-mapping-card" aria-live="polite">
+                  <div class="selected-mapping-head">
+                    <span
+                      id="selectedButtonSymbol"
+                      class="selected-button-symbol"
+                      >MIC</span
+                    >
+                    <div>
+                      <span class="section-kicker">SELECTED CONTROL</span>
+                      <h3 id="selectedButtonName">麥克風鍵</h3>
+                    </div>
+                    <span
+                      id="selectedButtonReliability"
+                      class="reliability-chip is-native"
+                      ><i></i>Codex 原生</span
+                    >
+                  </div>
+                  <div class="selected-mapping-value">
+                    <span>目前功能</span>
+                    <strong id="selectedButtonAction"
+                      >切換 Codex 即時語音</strong
+                    >
+                    <kbd id="selectedButtonShortcut">Ctrl + Shift + V</kbd>
+                  </div>
+                  <div class="selected-mapping-actions">
+                    <button
+                      id="selectedCaptureButton"
+                      class="button button-primary"
+                      type="button"
+                    >
+                      變更快捷鍵
+                    </button>
+                    <button
+                      id="selectedClearButton"
+                      class="button button-secondary"
+                      type="button"
+                    >
+                      清除
+                    </button>
+                  </div>
+                  <p>在左側手把圖上點一個按鍵，再從這裡修改；不必先找表格。</p>
+                </div>
+                <div class="section-heading all-mappings-heading">
+                  <div>
+                    <span class="section-kicker">ALL CONTROLS</span>
+                    <h3>所有按鍵</h3>
+                  </div>
+                  <div class="mapping-heading-actions">
+                    <span id="mappingCount" class="mapping-count">0 / 27</span>
+                    <button
+                      id="toggleAllMappingsButton"
+                      class="button button-quiet"
+                      type="button"
+                      aria-expanded="false"
+                    >
+                      展開
+                    </button>
+                  </div>
+                </div>
+                <div class="mapping-filter" role="group" aria-label="映射篩選">
+                  <button class="is-active" type="button" data-filter="all">
+                    全部</button
+                  ><button type="button" data-filter="face">主按鍵</button
+                  ><button type="button" data-filter="control">方向肩鍵</button
+                  ><button type="button" data-filter="stick">搖桿</button
+                  ><button type="button" data-filter="system">系統</button>
+                </div>
+                <div id="mappingList" class="mapping-list"></div>
+              </section>
+            </div>
+          </section>
+
+          <section id="touchpadView" class="view">
+            <div class="view-header">
+              <div>
+                <p class="eyebrow">DEVICE EXPERIENCE</p>
+                <h2>體驗</h2>
+              </div>
+              <span id="touchpadLiveBadge" class="badge">等待觸點</span>
+            </div>
+            <nav class="experience-tabs" aria-label="體驗設定">
+              <button type="button" data-experience-view="lighting">
+                狀態燈
+              </button>
+              <button type="button" data-experience-view="triggers">
+                自適應扳機
+              </button>
+              <button
+                class="is-active"
+                type="button"
+                data-experience-view="touchpad"
+              >
+                觸控板
+              </button>
+            </nav>
+            <div class="touchpad-workspace">
+              <section
+                class="touchpad-monitor-panel"
+                aria-label="觸控板即時輸入"
+              >
+                <div class="section-heading">
+                  <div>
+                    <span class="section-kicker">LIVE TOUCH</span>
+                    <h3>觸點數位分身</h3>
+                  </div>
+                  <strong
+                    id="touchpadLiveCoordinates"
+                    class="touchpad-coordinate"
+                    >— / —</strong
+                  >
+                </div>
+                <div id="touchpadSurface" class="touchpad-surface">
+                  <span class="touchpad-direction touchpad-direction-left"
+                    >←</span
+                  >
+                  <span class="touchpad-direction touchpad-direction-right"
+                    >→</span
+                  >
+                  <i
+                    id="touchpadCursor"
+                    class="touchpad-cursor"
+                    aria-hidden="true"
+                  ></i>
+                  <div class="touchpad-centerline" aria-hidden="true"></div>
+                </div>
+                <div class="touchpad-telemetry">
+                  <div><span>啟用方式</span><strong>觸點滑動</strong></div>
+                  <div>
+                    <span>本次位移</span
+                    ><strong id="touchpadGestureDelta">0 px</strong>
+                  </div>
+                  <div>
+                    <span>最近手勢</span
+                    ><strong id="touchpadLastGesture">—</strong>
+                  </div>
+                </div>
+              </section>
+              <section
+                class="touchpad-controls-panel"
+                aria-label="觸控板手勢設定"
+              >
+                <div class="touchpad-gesture-header">
+                  <div>
+                    <span class="section-kicker">DESKTOP NAVIGATION</span>
+                    <h3>虛擬桌面切換</h3>
+                  </div>
+                  <label class="status-link-toggle"
+                    ><input
+                      id="touchpadGestureToggle"
+                      type="checkbox"
+                      checked
+                    /><span class="switch-track" aria-hidden="true"
+                      ><i></i></span
+                    ><strong>啟用四指手勢</strong></label
+                  >
+                </div>
+                <div class="touchpad-route-list">
+                  <div>
+                    <span class="route-arrow">←</span
+                    ><span
+                      ><small>單指左滑</small
+                      ><strong>原生四指手勢：上一個桌面</strong></span
+                    ><kbd id="touchpadDriverLeft">偵測 HID</kbd>
+                  </div>
+                  <div>
+                    <span class="route-arrow">→</span
+                    ><span
+                      ><small>單指右滑</small
+                      ><strong>原生四指手勢：下一個桌面</strong></span
+                    ><kbd id="touchpadDriverRight">偵測 HID</kbd>
+                  </div>
+                </div>
+                <div class="touchpad-gesture-status">
+                  <span>辨識狀態</span><b id="touchpadGestureState">待機</b>
+                </div>
+                <div class="touchpad-option-row">
+                  <span>切換時靜音</span
+                  ><label class="status-link-toggle"
+                    ><input id="touchpadMuteToggle" type="checkbox" /><span
+                      class="switch-track"
+                      aria-hidden="true"
+                      ><i></i></span
+                    ><strong>系統靜音</strong></label
+                  >
+                </div>
+                <label class="touchpad-threshold"
+                  ><span>觸發距離</span
+                  ><output id="touchpadGestureThresholdOutput">320 px</output
+                  ><input
+                    id="touchpadGestureThreshold"
+                    class="range-input"
+                    type="range"
+                    min="160"
+                    max="800"
+                    step="20"
+                    value="320"
+                /></label>
+              </section>
+            </div>
+          </section>
+
+          <section id="lightingView" class="view">
+            <div class="view-header">
+              <div>
+                <p class="eyebrow">DEVICE EXPERIENCE</p>
+                <h2>體驗</h2>
+              </div>
+              <span id="lightOutputBadge" class="badge">未套用</span>
+            </div>
+            <nav class="experience-tabs" aria-label="體驗設定">
+              <button
+                class="is-active"
+                type="button"
+                data-experience-view="lighting"
+              >
+                狀態燈
+              </button>
+              <button type="button" data-experience-view="triggers">
+                自適應扳機
+              </button>
+              <button type="button" data-experience-view="touchpad">
+                觸控板
+              </button>
+            </nav>
+            <div class="lighting-workspace">
+              <section class="light-preview-panel">
+                <div class="section-heading">
+                  <div>
+                    <span class="section-kicker">LIVE PREVIEW</span>
+                    <h3 id="effectTitle">靜態常亮</h3>
+                  </div>
+                  <div id="colorChip" class="color-chip"></div>
+                </div>
+                <div id="lightPreview" class="light-preview">
+                  <div class="light-preview-device">
+                    <span class="preview-bar preview-bar-left"></span
+                    ><span class="preview-bar preview-bar-right"></span>
+                    <div id="previewPlayers" class="preview-player-lights">
+                      <i></i><i></i><i class="is-on"></i><i></i><i></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="light-telemetry">
+                  <div>
+                    <span>顏色</span><strong id="telemetryHex">#38DDB2</strong>
+                  </div>
+                  <div>
+                    <span>RGB</span
+                    ><strong id="telemetryRgb">56 / 221 / 178</strong>
+                  </div>
+                  <div>
+                    <span>指示燈</span><strong id="telemetryMask">0x04</strong>
+                  </div>
+                </div>
+              </section>
+
+              <section class="light-controls-panel">
+                <div class="codex-light-panel">
+                  <div class="codex-light-header">
+                    <div>
+                      <span class="section-kicker">CODEX LIVE STATUS</span>
+                      <h3>Codex 任務連動</h3>
+                    </div>
+                    <label class="status-link-toggle"
+                      ><input
+                        id="codexStatusToggle"
+                        type="checkbox"
+                        checked
+                      /><span class="switch-track" aria-hidden="true"
+                        ><i></i></span
+                      ><strong>自動跟隨</strong></label
+                    >
+                  </div>
+                  <div class="codex-state-grid" aria-label="Codex 狀態燈優先級">
+                    <div class="codex-state-row" data-codex-state="approval">
+                      <span class="state-light state-light-approval"></span
+                      ><strong>待核准</strong><span>黃燈閃爍</span><b>優先 1</b>
+                    </div>
+                    <div class="codex-state-row" data-codex-state="working">
+                      <span class="state-light state-light-working"></span
+                      ><strong>工作中</strong><span>藍色呼吸</span><b>優先 2</b>
+                    </div>
+                    <div class="codex-state-row" data-codex-state="complete">
+                      <span class="state-light state-light-complete"></span
+                      ><strong>已完成</strong><span>綠燈常亮</span><b>優先 3</b>
+                    </div>
+                    <div class="codex-state-row" data-codex-state="idle">
+                      <span class="state-light state-light-idle"></span
+                      ><strong>待命</strong><span>白燈常亮</span><b>優先 4</b>
+                    </div>
+                    <div class="codex-state-row" data-codex-state="error">
+                      <span class="state-light state-light-error"></span
+                      ><strong>發生錯誤</strong><span>紅燈閃爍</span
+                      ><b>優先 5</b>
+                    </div>
+                  </div>
+                  <div class="codex-current-state">
+                    <span id="codexStateDot" class="state-light"></span>
+                    <div>
+                      <span>目前狀態</span
+                      ><strong id="codexStateLabel">正在連接 Codex</strong>
+                    </div>
+                    <small id="codexStateMeta">讀取本機任務狀態</small>
+                  </div>
+                </div>
+                <div class="color-control-grid manual-light-control">
+                  <div class="color-wheel-wrap">
+                    <canvas
+                      id="colorWheel"
+                      width="180"
+                      height="180"
+                      tabindex="0"
+                      aria-label="色輪"
+                    ></canvas>
+                  </div>
+                  <div class="color-fields">
+                    <label class="hex-field"
+                      >HEX<input
+                        id="hexInput"
+                        type="text"
+                        value="#38DDB2"
+                        maxlength="7"
+                    /></label>
+                    <div class="rgb-grid">
+                      <label
+                        >R<input
+                          id="redInput"
+                          type="number"
+                          min="0"
+                          max="255"
+                          value="56" /></label
+                      ><label
+                        >G<input
+                          id="greenInput"
+                          type="number"
+                          min="0"
+                          max="255"
+                          value="221" /></label
+                      ><label
+                        >B<input
+                          id="blueInput"
+                          type="number"
+                          min="0"
+                          max="255"
+                          value="178"
+                      /></label>
+                    </div>
+                    <div class="swatches" role="group" aria-label="推薦顏色">
+                      <button
+                        class="swatch is-selected"
+                        data-color="#38DDB2"
+                        style="--swatch: #38ddb2"
+                        aria-label="薄荷綠"
+                      ></button
+                      ><button
+                        class="swatch"
+                        data-color="#58A6FF"
+                        style="--swatch: #58a6ff"
+                        aria-label="冷藍"
+                      ></button
+                      ><button
+                        class="swatch"
+                        data-color="#D26BFF"
+                        style="--swatch: #d26bff"
+                        aria-label="洋紅"
+                      ></button
+                      ><button
+                        class="swatch"
+                        data-color="#FF5A68"
+                        style="--swatch: #ff5a68"
+                        aria-label="珊瑚紅"
+                      ></button
+                      ><button
+                        class="swatch"
+                        data-color="#F4C94C"
+                        style="--swatch: #f4c94c"
+                        aria-label="琥珀黃"
+                      ></button
+                      ><button
+                        class="swatch"
+                        data-color="#F4F7F9"
+                        style="--swatch: #f4f7f9"
+                        aria-label="白色"
+                      ></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="control-row manual-light-control">
+                  <div class="field-label">
+                    <span>亮度</span><output id="brightnessOutput">100%</output>
+                  </div>
+                  <input
+                    id="brightness"
+                    class="range-input"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="100"
+                  />
+                </div>
+                <div class="control-row manual-light-control">
+                  <div class="field-label"><span>燈效</span></div>
+                  <div id="effectControls" class="segmented-control">
+                    <button class="is-active" data-effect="static">常亮</button
+                    ><button data-effect="blink">閃爍</button
+                    ><button data-effect="breathe">呼吸</button>
+                  </div>
+                </div>
+                <div class="control-row speed-row manual-light-control">
+                  <div class="field-label">
+                    <span>變化速度</span><output id="speedOutput">中速</output>
+                  </div>
+                  <input
+                    id="speed"
+                    class="range-input"
+                    type="range"
+                    min="1"
+                    max="5"
+                    value="3"
+                  />
+                </div>
+                <div class="control-row player-row manual-light-control">
+                  <div class="field-label">
+                    <span>玩家指示燈</span><output id="playerOutput">P1</output>
+                  </div>
+                  <div id="playerPresets" class="player-presets">
+                    <button class="is-active" data-player="1">P1</button
+                    ><button data-player="2">P2</button
+                    ><button data-player="3">P3</button
+                    ><button data-player="4">P4</button
+                    ><button data-player="5">P5</button>
+                  </div>
+                  <div id="playerLeds" class="player-leds">
+                    <button data-index="0"><i></i></button
+                    ><button data-index="1"><i></i></button
+                    ><button class="is-on" data-index="2"><i></i></button
+                    ><button data-index="3"><i></i></button
+                    ><button data-index="4"><i></i></button>
+                  </div>
+                </div>
+                <div class="light-actions manual-light-control">
+                  <button
+                    id="turnOffButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    關閉燈光</button
+                  ><button
+                    id="applyButton"
+                    class="button button-primary"
+                    type="button"
+                  >
+                    套用狀態燈
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section id="triggersView" class="view">
+            <div class="view-header">
+              <div>
+                <p class="eyebrow">DEVICE EXPERIENCE</p>
+                <h2>體驗</h2>
+              </div>
+              <span id="triggerOutputBadge" class="badge">未套用</span>
+            </div>
+            <nav class="experience-tabs" aria-label="體驗設定">
+              <button type="button" data-experience-view="lighting">
+                狀態燈
+              </button>
+              <button
+                class="is-active"
+                type="button"
+                data-experience-view="triggers"
+              >
+                自適應扳機
+              </button>
+              <button type="button" data-experience-view="touchpad">
+                觸控板
+              </button>
+            </nav>
+            <div class="trigger-workspace">
+              <section class="trigger-preview-panel">
+                <div class="section-heading">
+                  <div>
+                    <span class="section-kicker">TRAVEL PROFILE</span>
+                    <h3>扳機行程</h3>
+                  </div>
+                  <span class="trigger-usb-badge">USB</span>
+                </div>
+                <div class="trigger-preview-stage">
+                  <div class="trigger-preview" data-trigger-preview="left">
+                    <div class="trigger-preview-head">
+                      <strong>L2</strong
+                      ><span id="leftTriggerModeLabel">關閉</span>
+                    </div>
+                    <div class="trigger-rail">
+                      <i class="trigger-current" id="leftTriggerCurrent"></i
+                      ><span class="trigger-resistance"></span
+                      ><b class="trigger-break"></b>
+                    </div>
+                    <div class="trigger-scale">
+                      <span>0%</span><span>按壓行程</span><span>100%</span>
+                    </div>
+                  </div>
+                  <div class="trigger-preview" data-trigger-preview="right">
+                    <div class="trigger-preview-head">
+                      <strong>R2</strong
+                      ><span id="rightTriggerModeLabel">槍械斷點</span>
+                    </div>
+                    <div class="trigger-rail">
+                      <i class="trigger-current" id="rightTriggerCurrent"></i
+                      ><span class="trigger-resistance"></span
+                      ><b class="trigger-break"></b>
+                    </div>
+                    <div class="trigger-scale">
+                      <span>0%</span><span>按壓行程</span><span>100%</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="trigger-legend">
+                  <span><i class="legend-live"></i>即時位置</span
+                  ><span><i class="legend-zone"></i>阻力區間</span
+                  ><span><i class="legend-break"></i>觸發斷點</span>
+                </div>
+              </section>
+
+              <section class="trigger-controls-panel">
+                <div class="trigger-preset-row">
+                  <div>
+                    <span class="section-kicker">QUICK PRESET</span>
+                    <h3>快速設定</h3>
+                  </div>
+                  <button
+                    id="triggerGunPreset"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    雙側槍械
+                  </button>
+                </div>
+                <div class="trigger-control-grid">
+                  <section class="trigger-control" data-trigger-control="left">
+                    <div class="trigger-control-head">
+                      <strong>L2</strong
+                      ><output id="leftTriggerSummary">關閉</output>
+                    </div>
+                    <div class="trigger-mode segmented-control">
+                      <button
+                        data-trigger-side="left"
+                        data-trigger-mode="off"
+                        class="is-active"
+                      >
+                        關閉</button
+                      ><button
+                        data-trigger-side="left"
+                        data-trigger-mode="feedback"
+                      >
+                        阻力</button
+                      ><button
+                        data-trigger-side="left"
+                        data-trigger-mode="weapon"
+                      >
+                        槍械
+                      </button>
+                    </div>
+                    <label class="trigger-range-row"
+                      ><span>起始位置</span
+                      ><output id="leftTriggerStartOutput">30%</output
+                      ><input
+                        id="leftTriggerStart"
+                        class="range-input"
+                        type="range"
+                        min="0"
+                        max="9"
+                        value="3"
+                    /></label>
+                    <label class="trigger-range-row trigger-end-row"
+                      ><span>斷點結束</span
+                      ><output id="leftTriggerEndOutput">60%</output
+                      ><input
+                        id="leftTriggerEnd"
+                        class="range-input"
+                        type="range"
+                        min="1"
+                        max="9"
+                        value="6"
+                    /></label>
+                    <label class="trigger-range-row"
+                      ><span>阻力強度</span
+                      ><output id="leftTriggerStrengthOutput">5 / 8</output
+                      ><input
+                        id="leftTriggerStrength"
+                        class="range-input"
+                        type="range"
+                        min="1"
+                        max="8"
+                        value="5"
+                    /></label>
+                  </section>
+                  <section class="trigger-control" data-trigger-control="right">
+                    <div class="trigger-control-head">
+                      <strong>R2</strong
+                      ><output id="rightTriggerSummary">槍械斷點</output>
+                    </div>
+                    <div class="trigger-mode segmented-control">
+                      <button data-trigger-side="right" data-trigger-mode="off">
+                        關閉</button
+                      ><button
+                        data-trigger-side="right"
+                        data-trigger-mode="feedback"
+                      >
+                        阻力</button
+                      ><button
+                        data-trigger-side="right"
+                        data-trigger-mode="weapon"
+                        class="is-active"
+                      >
+                        槍械
+                      </button>
+                    </div>
+                    <label class="trigger-range-row"
+                      ><span>起始位置</span
+                      ><output id="rightTriggerStartOutput">30%</output
+                      ><input
+                        id="rightTriggerStart"
+                        class="range-input"
+                        type="range"
+                        min="0"
+                        max="9"
+                        value="3"
+                    /></label>
+                    <label class="trigger-range-row trigger-end-row"
+                      ><span>斷點結束</span
+                      ><output id="rightTriggerEndOutput">60%</output
+                      ><input
+                        id="rightTriggerEnd"
+                        class="range-input"
+                        type="range"
+                        min="1"
+                        max="9"
+                        value="6"
+                    /></label>
+                    <label class="trigger-range-row"
+                      ><span>阻力強度</span
+                      ><output id="rightTriggerStrengthOutput">5 / 8</output
+                      ><input
+                        id="rightTriggerStrength"
+                        class="range-input"
+                        type="range"
+                        min="1"
+                        max="8"
+                        value="5"
+                    /></label>
+                  </section>
+                </div>
+                <div class="trigger-actions">
+                  <button
+                    id="disableTriggersButton"
+                    class="button button-secondary"
+                    type="button"
+                  >
+                    全部關閉</button
+                  ><button
+                    id="applyTriggersButton"
+                    class="button button-primary"
+                    type="button"
+                  >
+                    套用扳機效果
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="activity-bar">
+        <div>
+          <span class="activity-label">ACTIVITY</span
+          ><strong id="activityMessage">Codex Controller 已就緒</strong>
+        </div>
+        <time id="activityTime"></time>
+      </footer>
+    </div>
+
+    <dialog id="messageDialog" class="message-dialog">
+      <p id="dialogEyebrow" class="eyebrow">CODEX CONTROLLER</p>
+      <h2 id="dialogTitle">本機服務未連接</h2>
+      <p id="dialogMessage"></p>
+      <button
+        id="dialogCloseButton"
+        class="button button-primary"
+        type="button"
+      >
+        知道了
+      </button>
+    </dialog>
+    <script src="./app.js?v=24"></script>
+  </body>
+</html>

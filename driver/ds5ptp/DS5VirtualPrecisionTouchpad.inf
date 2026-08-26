@@ -1,0 +1,67 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=HIDClass
+ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider=%ProviderString%
+DriverVer=08/14/2026,1.1.1.0
+CatalogFile=DS5VirtualPrecisionTouchpad.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir=13
+
+[SourceDisksNames]
+1=%DiskDescription%,,,
+
+[SourceDisksFiles]
+DS5VirtualPrecisionTouchpad.dll=1
+
+[Manufacturer]
+%ManufacturerString%=DS5VibeHub,NTamd64.10.0...22000
+
+[DS5VibeHub.NTamd64.10.0...22000]
+%DeviceDescription%=DS5PTP_Install,Root\DS5VibeHubTouchpad
+
+[DS5PTP_Install.NT]
+CopyFiles=DriverCopy
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT
+
+[DS5PTP_Install.NT.hw]
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT.hw
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.hw
+
+[DS5PTP_Install.NT.Services]
+Include=MsHidUmdf.inf
+Needs=MsHidUmdf.NT.Services
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.Services
+
+[DS5PTP_Install.NT.Filters]
+Include=WUDFRD.inf
+Needs=WUDFRD_LowerFilter.NT.Filters
+
+[DS5PTP_Install.NT.Wdf]
+UmdfService=DS5VirtualPrecisionTouchpad,DS5PTP_Service
+UmdfServiceOrder=DS5VirtualPrecisionTouchpad
+UmdfKernelModeClientPolicy=AllowKernelModeClients
+UmdfFileObjectPolicy=AllowNullAndUnknownFileObjects
+UmdfMethodNeitherAction=Copy
+UmdfFsContextUsePolicy=CanUseFsContext2
+
+[DS5PTP_Service]
+UmdfLibraryVersion=2.33.0
+ServiceBinary="%13%\DS5VirtualPrecisionTouchpad.dll"
+
+[DriverCopy]
+DS5VirtualPrecisionTouchpad.dll
+
+[Strings]
+ProviderString="DS5 Vibe Hub"
+ManufacturerString="DS5 Vibe Hub"
+DiskDescription="DS5 Virtual Precision Touchpad installation media"
+DeviceDescription="DS5 Virtual Precision Touchpad (Test)"

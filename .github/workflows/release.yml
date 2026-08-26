@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify tag and version
+        shell: pwsh
+        run: |
+          $version = (Get-Content VERSION -Raw).Trim()
+          if ($env:GITHUB_REF_NAME -ne "v$version") {
+            throw "Tag $env:GITHUB_REF_NAME does not match VERSION $version"
+          }
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --yes --no-progress
+      - name: Build portable and installer packages
+        shell: pwsh
+        run: .\packaging\build.ps1
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = (Get-Content VERSION -Raw).Trim()
+          gh release create "v$version" `
+            "packaging\DualSense-Codex-Portable-$version.zip" `
+            "packaging\output\DualSense-Codex-Setup-$version.exe" `
+            "packaging\SHA256SUMS-$version.txt" `
+            --title "Codex Controller for DualSense $version" `
+            --notes-file RELEASE_NOTES.md `
+            --prerelease

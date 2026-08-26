@@ -1,0 +1,61 @@
+# Template only. Replace __PYTHON_EXE__ and __CODEX_HOME__ with ASCII paths.
+# Windows selects commandWindows; command is retained for schema portability.
+# PostToolUse resolves approval state but does not end the current turn.
+
+[[hooks.UserPromptSubmit]]
+[[hooks.UserPromptSubmit.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" UserPromptSubmit'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" UserPromptSubmit'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: working'
+
+[[hooks.PreToolUse]]
+matcher = '.*'
+[[hooks.PreToolUse.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" PreToolUse'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" PreToolUse'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: working'
+
+[[hooks.PermissionRequest]]
+matcher = '.*'
+[[hooks.PermissionRequest.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" PermissionRequest'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" PermissionRequest'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: waiting for approval'
+
+[[hooks.PostToolUse]]
+matcher = '.*'
+[[hooks.PostToolUse.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" PostToolUse'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" PostToolUse'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: tool completed'
+
+[[hooks.Stop]]
+[[hooks.Stop.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" Stop'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" Stop'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: done'
+
+[[hooks.SubagentStop]]
+matcher = '.*'
+[[hooks.SubagentStop.hooks]]
+type = 'command'
+command = '"__PYTHON_EXE__" -B "__CODEX_HOME__/bin/ds5vibehub-hook.py" SubagentStop'
+commandWindows = '"__PYTHON_EXE__" -B "__CODEX_HOME__\\bin\\ds5vibehub-hook.py" SubagentStop'
+async = false
+timeoutSec = 5
+statusMessage = 'DS5: subagent done'

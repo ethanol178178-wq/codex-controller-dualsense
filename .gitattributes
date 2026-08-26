@@ -1,0 +1,6 @@
+* text=auto
+*.png binary
+*.cat binary
+*.cer binary
+*.dll binary
+*.pdb binary

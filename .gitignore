@@ -1,0 +1,54 @@
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+
+# Local diagnostics, copied Codex state, generated schemas, and databases
+.diag-*/
+.tmp-*/
+.tmp-*
+.nuget-local/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Runtime logs and process results
+*.log
+*.out
+*.err
+bridge-restart-admin.result.json
+
+# Virtual driver build and signing outputs
+driver/ds5ptp/bin/
+driver/ds5ptp/obj/
+driver/ds5ptp/package/
+
+# Locally assembled public release archives
+release/
+packaging/.build/
+packaging/dist/
+packaging/output/
+packaging/*.zip
+packaging/*.exe
+packaging/SHA256SUMS-*.txt
+packaging/.test-*/
+
+# Local test sandboxes
+.codex-test-temp/
+.test-tmp/
+.test-temp/
+
+# Machine-specific generated hook configurations
+codex-hooks.json
+codex-hooks-native.toml
+hooks-migration/config.hooks.ascii.generated.toml
+
+# One-off diagnostics and maintenance scripts with machine/process state
+elevated-*.ps1
+launch-elevated-maintenance.ps1
+restart-codex-desktop.ps1
+inspect_live_hooks.py
+list_hooks.py
+probe_hooks.py
+trust-codex-hooks.ps1
+verify-hook-sequence.ps1
+install-codex-hooks.ps1

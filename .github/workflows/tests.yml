@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run Python tests
+        shell: pwsh
+        run: python -m unittest discover -s . -p "test*.py" -v
+      - name: Check Python syntax
+        shell: pwsh
+        run: python -m py_compile bridge.py approval_detection.py approval_watcher.py codex_hook.py launcher.py serve_ui.py
+      - name: Check JavaScript syntax
+        shell: pwsh
+        run: node --check app.js

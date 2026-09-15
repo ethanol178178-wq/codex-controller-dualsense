@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "play"
 
 $ProjectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $UserProfileDir = [Environment]::GetFolderPath("UserProfile")
